@@ -211,6 +211,30 @@ classdef ComputationalGraphPlot < handle
             
         end
 
+        function help(cgp)
+        % Print help for interactive use
+
+            str = {};
+            str{end + 1} = '';
+            str{end + 1} = 'Commands available for ComputationalGraphPlot object given by cgp';
+            str{end + 1} = '';
+            str{end + 1} = 'cgp.plot()                       : Plot graph';
+            str{end + 1} = 'cgp.addFilter(regstr)            : Select the nodes that match the regular expression regstr';
+            str{end + 1} = '                                   This action is added in the filter list';
+            str{end + 1} = 'cgp.removeLast()                 : Remove last filter in list';
+            str{end + 1} = 'cgp.resetFilters()               : Clear filter list';
+            str{end + 1} = 'cgp.addFilter(''addParents'')      : Add parents of the visible nodes';
+            str{end + 1} = '                                   This action is added to the filter list';
+            str{end + 1} = 'cgp.addFilter(''addChildren'')     : Add children of the visible nodes';
+            str{end + 1} = '                                   This action is added to the filter list';
+            str{end + 1} = 'cgp.remove({''remove'', regstr})   : Remove from the visible nodes the nodes that match the regular expression';
+            str{end + 1} = '                                   This action is added to the filter list';            
+            str = strjoin(str, newline);
+
+            fprintf('%s\n', str);
+            
+        end
+        
         function h = plot(cgp)
 
             nodeinds = cgp.nodeinds;
