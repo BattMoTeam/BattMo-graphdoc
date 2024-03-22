@@ -21,12 +21,10 @@ classdef ThermalModel < BaseModel
             model = model.registerVarNames(varnames);
             
             fn = @ThermalModel.updateFlux;
-            inputnames = {'T'};
-            model = model.registerPropFunction({'flux', fn, inputnames});
+            model = model.registerPropFunction({'flux', fn, {'T'}});
 
             fn = @ThermalModel.updateAccumTerm;
-            inputnames = {'T'};
-            model = model.registerPropFunction({'accumTerm', fn, inputnames});
+            model = model.registerPropFunction({'accumTerm', fn, {'T'}});
             
             fn = @ThermalModel.updateEnergyCons;
             inputnames = {'accumTerm', 'flux', 'source'};            

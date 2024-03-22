@@ -585,5 +585,43 @@ We have declared three property function using the method :code:`registerPropFun
 
    .. code:: matlab
 
+      fn            = @ThermalModel.updateFlux;
+      inputvarnames = {VarName({}, 'T')};
+      varnname      = VarName({}, 'flux');
       
-  
+      propfunction = PropFunction(varname, fn, inputvarnames, {});
+      
+      model = model.registerPropFunction(propfunction);             
+      
+We can instantiate this model and use the :battmo:`ComputationalGraphPlot` tool to visualize the resulting
+graph.
+
+.. code:: matlab
+
+   model = ThermalModel();
+   cgp = model.cgp(); % "cgp" stands for "computational graph plot"
+   cgp.plot();
+
+We obtain the plot we already presented :ref:`above<tempgraph>`
+
+.. figure:: img/tempgraph.png
+   :target: _images/tempgraph.png
+   :name: tempgraphcopy
+   :width: 100%
+   :align: center
+
+   Temperature model graph
+
+We can use the :code:`printOrderedFunctionCallList` method of the :battmo:`ComputationalGraphTool` class to
+print the sequence of function calls that is used to update all the variables in the model
+:battmo:`ThermalModel`, which examplify how we can automatize the assembly.
+
+.. code::
+
+   >> cgt = model.cgt
+   >> cgt.printOrderedFunctionCallList
+
+   Function call list
+   state = model.updateAccumTerm(state);
+   state = model.updateFlux(state);
+   state = model.updateEnergyCons(state);   
