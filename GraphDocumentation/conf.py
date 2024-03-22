@@ -318,8 +318,8 @@ add_module_names=False
 # MatAttributeDocumenter.add_directive_header = _add_directive_header
 
 
-repo_url    = 'https://github.com/BattMoTeam/BattMo'
-branch_name = 'dev'
+repo_url    = 'https://github.com/BattMoTeam/BattMo-graphdoc'
+branch_name = 'graphdoc'
 
 def find_battmo_file(filename):
     ignored_dirs = ['output', 'Externals', '.git', '.github']

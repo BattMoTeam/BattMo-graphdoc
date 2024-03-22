@@ -4,9 +4,6 @@ classdef ReactionModel < BaseModel
 
         function model = registerVarAndPropfuncNames(model)
             
-            %% Declaration of the Dynamical Variables and Function of the model
-            % (setup of varnameList and propertyFunctionList)
-
             model = registerVarAndPropfuncNames@BaseModel(model);
             
             varnames = {};

@@ -31,7 +31,13 @@ by
 We have seven variables :math:`R,\ j, \eta, \text{OCP}, \phi_s, \phi_e, c_s, c_e`. The dependency graph we
 obtain from the equations above is
 
-.. image:: img/reacmodelgraph.png
+.. figure:: img/reacmodelgraph.png
+   :target: _images/reacmodelgraph.png
+   :name: reacmodelgraph
+   :width: 100%
+   :align: center
+
+   Reaction model graph
 
 This graph has been obtained in BattMo after we implemented the model. We will explain later how this can be
 done (for the impatient, see here)
@@ -60,19 +66,19 @@ meaning. The user has chosen them from a physical insight, that we want to prese
 the models. In our previous examples, the variables we have introduced have all a name meaningfull for the
 expert in the domains.
 
-+--------------+--------------------------------------+
-| R            | Reaction Rate                        |
-+--------------+--------------------------------------+
-| j            | Exchange Current Density             |
-+--------------+--------------------------------------+
-| eta          | Over-potential                       |
-+--------------+--------------------------------------+
-| OCP          | Open Circuit Potential               |
-+--------------+--------------------------------------+
-| phi_s, phi_e | Solid and Electrolyte potentials     |
-+--------------+--------------------------------------+
-| c_s, c_e     | Solid and Electrolyte concentrations |
-+--------------+--------------------------------------+
+ +--------------+--------------------------------------+
+ | R            | Reaction Rate                        |
+ +--------------+--------------------------------------+
+ | j            | Exchange Current Density             |
+ +--------------+--------------------------------------+
+ | eta          | Over-potential                       |
+ +--------------+--------------------------------------+
+ | OCP          | Open Circuit Potential               |
+ +--------------+--------------------------------------+
+ | phi_s, phi_e | Solid and Electrolyte potentials     |
+ +--------------+--------------------------------------+
+ | c_s, c_e     | Solid and Electrolyte concentrations |
+ +--------------+--------------------------------------+
 
 A user can inspect a given model first by looking at the graph, recognized the variables that are named
 here. They should be meaningfull to him, as they should have been chosen to correspond to a given domain
@@ -107,7 +113,13 @@ Continuing with the same example, we may introduce a temperature dependency in t
 
 Then, we have to introduce a new node (i.e. variable) in our graph, the temperature :code:`T`.
 
-.. image:: img/reacmodelgraph2.png
+.. figure:: img/reacmodelgraph2.png
+   :target: _images/reacmodelgraph2.png
+   :name: reacmodelgraph2
+   :width: 100%
+   :align: center
+
+   Reaction model graph with added temperature
 
 Let us introduce an other model, at least its computational graph. We consider a simple heat equation
 
@@ -120,27 +132,39 @@ We introduce in addition to the temperature :code:`T` the following variable nam
 column, we write the definition they will take after discretization. The operators :code:`div` and
 :code:`grad` denotes the discrete differential operators used in the assembly.
 
-+------------+--------------------------------------------------------------------+
-| accumTerm  | :math:`\alpha\frac{T - T^0}{\Delta t}`                             |
-+------------+--------------------------------------------------------------------+
-| flux       | :math:`-\lambda\text{grad}(T)`                                     |
-+------------+--------------------------------------------------------------------+
-| sourceTerm | :math:`q`                                                          |
-+------------+--------------------------------------------------------------------+
-| energyCons | :math:`\text{accumTerm} + \text{div}(\text{flux}) + \text{source}` |
-+------------+--------------------------------------------------------------------+
+ +------------+--------------------------------------------------------------------+
+ | accumTerm  | :math:`\alpha\frac{T - T^0}{\Delta t}`                             |
+ +------------+--------------------------------------------------------------------+
+ | flux       | :math:`-\lambda\text{grad}(T)`                                     |
+ +------------+--------------------------------------------------------------------+
+ | sourceTerm | :math:`q`                                                          |
+ +------------+--------------------------------------------------------------------+
+ | energyCons | :math:`\text{accumTerm} + \text{div}(\text{flux}) + \text{source}` |
+ +------------+--------------------------------------------------------------------+
 
 The computational for the temperature model is given by
 
-.. image:: img/tempgraph.png
+.. figure:: img/tempgraph.png
+   :target: _images/tempgraph.png
+   :name: tempgraph
+   :width: 100%
+   :align: center
 
+   Temperature model graph
+             
 Having now two models, we can illustrate how we can combine the corresponding computational graph to obtain a
 coupled model. Let us couple the two models in two ways. We include a heat source produced by the chemical
 reaction, as some function of the reaction rate. The effect of the temperature on the chemical reaction is
 included, as we presented earlier, as a additional temperature dependence of the open circuit potential
 :code:`OCP`. We obtain the following computational graph
 
-.. image:: img/tempreacgraph.png
+.. figure:: img/tempreacgraph.png
+   :target: _images/tempreacgraph.png
+   :name: tempreacgraph
+   :width: 100%
+   :align: center
+
+   Coupled Temperature Reaction model graph
 
 In the node names, we recognize the origin of variable through a model name, either :code:`Reaction` or
 :code:`Thermal`. We will come back later to that.
@@ -170,17 +194,23 @@ chemical reactions.
 
 The computational grap for each of this equation take the generic form
 
-.. image:: img/concgraph.png
+.. figure:: img/concgraph.png
+   :target: _images/concgraph.png
+   :name: concgraph
+   :width: 100%
+   :align: center
+
+   Concentration model graph
 
 where
 
-+------------+--------------------------------------+
-| masssAccum | :math:`\frac{c - c^0}{\Delta t}`     |
-+------------+--------------------------------------+
-| source     | :math:`R`                            |
-+------------+--------------------------------------+
-| massCons   | :math:`\frac{c - c^0}{\Delta t} - R` |
-+------------+--------------------------------------+
+ +------------+--------------------------------------+
+ | masssAccum | :math:`\frac{c - c^0}{\Delta t}`     |
+ +------------+--------------------------------------+
+ | source     | :math:`R`                            |
+ +------------+--------------------------------------+
+ | massCons   | :math:`\frac{c - c^0}{\Delta t} - R` |
+ +------------+--------------------------------------+
 
 Let us now combine this model with the first one, which provided us with te computation of the chemical
 reaction rate. We need two instance of the concentration model. To solve, the issue of **duplicated** variable
@@ -189,7 +219,13 @@ model names and a model hierarchy. This was done already earlier with the :code:
 models. Let us name our two concentration models as :code:`Solid` and :code:`Elyte`. We obtain the following
 graph.
 
-.. image:: img/concreacgraph.png 
+.. figure:: img/concreacgraph.png
+   :target: _images/concreacgraph.png
+   :name: concreacgraph
+   :width: 100%
+   :align: center
+
+   Coupled reaction-concentration model
 
 We note that it becomes already difficult to read off the graph and it will become harder and harder as model
 grow. We have developped visualization tool that will help us in exploring the model through their graphs.
@@ -202,16 +238,352 @@ Finally, we can couple the model above with with the temperature, by *sewing* to
 previous composite model as :code:`Masses` and keep the name of :code:`Thermal` for the thermal model. We
 obtain the following
 
-.. image:: img/tempconcreacgraph.png
+.. figure:: img/tempconcreacgraph.png
+   :target: _images/tempconcreacgraph.png
+   :name: tempconcreacgraph
+   :width: 100%
+   :align: center
+
+   Coupled Temperature-Concentration-Reaction graph
 
 New computational graphs are thus obtained by connecting existing graph, using a hierarchy of model. In the
 example above, the model hierarchy is given by
 
-.. image:: img/tempconcreacgraphmodel.png
+.. figure:: img/tempconcreacgraphmodel.png
+   :target: _images/tempconcreacgraphmodel.png
+   :name: tempconcreacgraphmodel
+   :width: 100%
+   :align: center
 
+   Model hierarchy
 
+The graph of a parent model is essentially composed of the graphs of its child models with the addition of a
+few new edges which connect the graphs of the child models. The graph of the parent model can also bring its
+own new variables.
 
+Graph Setup and Implementation
+==============================
 
+The implementation of a model can be decomposed into two steps.
 
-           
+#. We setup the computational graph.
+#. We implement the functions corresponding to each node with incoming edges.
+
+Our claim is that this decomposition **breaks the complexity** in the implementation of large coupled
+models. Once the two steps above are done, a Newton loop in our simulator will consist of
+
+.. _assembly steps:
+
+#. Instantiation of the primary variables (the root nodes) as AD (Automatic Differentiation) variables
+#. Evaluation of all the functions in a order that can be infered by the graph, as it gives us the relative
+   dependencie between all the variables
+#. Assembly of the Jacobian obtained form the residual equations (the tail nodes)
+
+The Jacobian matrix with the residuals can be sent to a Newton solver which will return an update of the
+primary variables, until convergence. All these three steps can by **automatised** as we will see later, so
+that a user which wants to implement a new model can only focus on the two steps mentioned further up.
+
+We need now to provide the user with a framework for computational graph and functionalities to setup graphs
+easily within this framework. Let review the functionalities we want to include.
+
+The overall goals are readibility and reusabililty. For code reusability, we want to be able to reuse in an
+easy way any function that have been implemented in existing models. For the graph framework it implies that
+graphs can always be modified at any level. A modification of an existing model consists of changing its graph
+and add or replace functions that have to be changed or replace but keeping **all the other functions
+unchanged**. We should be able to setup our assembly :ref:`step 2<assembly steps>` using these functions
+untouched. We will see how we solve this requirement.
+
+A graph, in general, is determined by the nodes and edges. Typically a graph description is done by indexing
+the nodes and edges are described by a pair of node index. In our case, the indexing is done internally in
+processing of the model. At the setup level for the user, we want to use variable names (string) because they
+are supposed to have a meaning for the user and a model designer is going to choose those carefully in order to
+enhance the readibility of its model. When, we combine graphs we face the issue of shared names by the two
+graphs. Since the models have been likely implemented independently, we have to deal with this issue. We solve
+it by using a **name space** mechanism. For a given variable name, indices are frequently needed and should be
+supported. A typical example is a chemical system which brings different species, each of them bringing a
+concencentration variable. To get a generic implementation, it is impractical to deal with the names of each of
+the species and we rather use indices, over which it is easy to iterate. A map between species name in index
+can be conveniently introduced. We end up with the following structure for a variable name, a class called
+:code:`VarName` see :battmo:`VarName` with the following properties
+
+.. code:: matlab
+          
+   classdef VarName
+    
+     properties
+        
+        namespace % Cell array of strings
+        name      % String
+        dim       % Integer
+        index     % Array of integer or string ':'
+
+     end
+    
+Within a model (i.e. a graph) all the variables (i.e. nodes) have a unique name. A new model can be created by
+combining existing models. Each of those should be assigned a unique name, which we be added to the name
+space. We end up with a graph of unique names. The process is the same as module import in programming language
+such as Python or Julia.
+
+We can use the example above to illustrate the mechanism. At the three different model levels
+(:ref:`reaction model<reacmodelgraph>`, :ref:`coupled reaction-concentration model<concreacgraph>` and
+:ref:`coupled temperature-reaction-concentration model<tempconcreacgraphmodel>`), the concentration of the
+solid electrode takes different names
+
+ +--------------------------------------------------------------------+--------------------------------+---------------+
+ | model                                                              | namespace                      | name          |
+ +--------------------------------------------------------------------+--------------------------------+---------------+
+ | :ref:`reaction <reacmodelgraph>`                                   | :code:`{}`                     | :code:`'c_s'` |
+ +--------------------------------------------------------------------+--------------------------------+---------------+
+ | :ref:`reaction-concentration <concreacgraph>`                      | :code:`{'Reaction'}`           | :code:`'c_s'` |
+ +--------------------------------------------------------------------+--------------------------------+---------------+
+ | :ref:`temperature-reaction-concentration <tempconcreacgraphmodel>` | :code:`{'Masses', 'Reaction'}` | :code:`'c_s'` |
+ +--------------------------------------------------------------------+--------------------------------+---------------+
+
+We use two instances of the :ref:`concentration model<concgraph>` in the :ref:`coupled reaction-concentration
+model<concreacgraph>`. Namespace is needed to distinguish between those,
+
+ +-------------------+-----------+
+ | namespace         | name      |
+ +-------------------+-----------+
+ | :code:`{'Solid'}` | :code:`c` |
+ +-------------------+-----------+
+ | :code:`{'Elyte'}` | :code:`c` |
+ +-------------------+-----------+
+
+Let us introduce the code functionalities for constructing models. For the moment, we focus on the the nodes
+(variable names). Later, we will look at the edges (functional dependencies). We use the :ref:`temperature
+model<tempgraph>` as an example. The class :battmo:`BaseModel` is, at its name indicates, the base class for
+all models. We will introduce gradually the most usefull methods for this class. For our temperature model, we
+start with
+
+.. code:: matlab
+
+   classdef ThermalModel < BaseModel
    
+       methods
+   
+           function model = registerVarAndPropfuncNames(model)
+               
+               %% Declaration of the Dynamical Variables and Function of the model
+               % (setup of varnameList and propertyFunctionList)
+   
+               model = registerVarAndPropfuncNames@BaseModel(model);
+               
+               varnames = {};
+               % Temperature
+               varnames{end + 1} = 'T';
+               % Accumulation term
+               varnames{end + 1} = 'accumTerm';
+               % Flux flux
+               varnames{end + 1} = 'flux';
+               % Heat source
+               varnames{end + 1} = 'source';
+               % Energy conservation
+               varnames{end + 1} = 'energyCons';
+               
+               model = model.registerVarNames(varnames);
+
+           end
+       end
+   end          
+
+The most impatient can have a look of the complete implementation of :battmo:`ThermalModel`. The method
+:code:`registerVarAndPropfuncNames` is used to setup all that deals with the graph in a given model. We called
+the method :code:`registerVarNames` to add a list of nodes in our graph given by :code:`varnames`.
+
+.. note::
+
+   The variable name is given by a single string here and not a instance of :battmo:`VarName`. This is a
+   syntaxic sugar and internally the variable name :code:`T` is converted to :code:`VarName({}, 'T', 1, ':')`
+
+   To lighten the graph setup, we have introduced at several places syntaxic sugar.
+
+We can now instantiate the model, setup the computational graph. The graph is given as a
+:battmo:`ComputationalGraphTool` class instance. This class provides some computational and inspection methods
+that acts on the graph.
+
+.. code:: matlab
+
+   model = ThermalModel();
+   model = model.setupComputationalGraph();
+   cgt   = model.computationalGraph;
+
+We have written a shortcut for the two last lines
+
+.. code:: matlab
+
+   cgt =  model.cgt;
+
+
+When the computational graph is setup, the property :code:`varNameList` of :battmo:`BaseModel` is populated
+with :battmo:`VarName` variables. We will rarely look at this list directly. Instead, we use the method
+:code:`printVarNames` in :battmo:`ComputationalGraphTool` which, as its name indicates, print the variables
+that have been registered.
+
+.. code:: 
+
+   >> cgt.printVarNames()
+   
+   T
+   source
+   accumTerm
+   flux
+   energyCons
+
+Similary, we setup a :ref:`reaction model<reacmodelgraph>` as follows
+
+.. code:: matlab
+
+   classdef ReactionModel < BaseModel
+
+       methods
+
+           function model = registerVarAndPropfuncNames(model)
+               
+               model = registerVarAndPropfuncNames@BaseModel(model);
+               
+               varnames = {};
+               % potential in electrode
+               varnames{end + 1} = 'phi_s';
+               % charge carrier concentration in electrode - value at surface
+               varnames{end + 1} = 'c_s';
+               % potential in electrolyte
+               varnames{end + 1} = 'phi_e';
+               % charge carrier concentration in electrolyte
+               varnames{end + 1} = 'c_e';
+               % Electrode over potential
+               varnames{end + 1} = 'eta';
+               % Reaction rate [mol s^-1 m^-2]
+               varnames{end + 1} = 'R';
+               % OCP [V]
+               varnames{end + 1} = 'OCP';
+               % Reaction rate coefficient [A m^-2]
+               varnames{end + 1} = 'j';
+            
+               model = model.registerVarNames(varnames);
+
+           end
+       end
+   end
+       
+(For the impatient, the full implementation which includes the properties is available
+:battmo:`here<ReactionModel>`). As expected, we obtain the following output
+
+.. code::
+
+   >> model = ReactionModel();
+   >> cgt = model.cgt;
+   >> cgt.printVarNames
+   
+   phi_s
+   c_s
+   phi_e
+   c_e
+   OCP
+   j
+   eta
+   R   
+
+Let us now couple the two models. We introduce a new model which has in its properties an instance of the
+:code:`ReactionModel` and of the :code:`ThermalModel`. The name of the properties is use to determine the
+namespace. We write
+
+.. code:: matlab
+
+   classdef ReactionThermalModel < BaseModel
+   
+       properties
+   
+           Reaction
+           Thermal
+           
+       end
+       
+       methods
+   
+           function model = ReactionThermalModel()
+   
+               model.Reaction = ReactionModel();
+               model.Thermal  = ThermalModel();
+               
+           end
+
+       end
+
+   end
+
+We can already instantiate this model (for the impatient, the full model setup is available :battmo:`here<ReactionThermalModel>`).
+
+.. code:: 
+
+   >> model = ReactionThermalModel();
+   >> cgt = model.cgt;
+   >> cgt.printVarNames();
+
+   Reaction.phi_s
+   Reaction.c_s
+   Reaction.phi_e
+   Reaction.c_e
+   Thermal.T
+   Reaction.OCP
+   Reaction.j
+   Thermal.accumTerm
+   Thermal.flux
+   Reaction.eta
+   Reaction.R
+   Thermal.source
+   Thermal.energyCons
+
+We now observe how the new model has all the variables from both the sub models and they have been assigned a
+namespace which prevents ambiguities. In the printed form above, the name space components are joined with a
+dot delimiter and added in front of the name. The :battmo:`VarName` variable that corresponds to the first
+name in the printed list above is :code:`VarName({'Reaction'}, 'phi_s')`
+
+Let us now look at how we declare the edges, with corresponds for us to the function that update some of the
+variables. For some of the variables, we declare the fact that the variable will be updated by calling a
+function where the arguments are given by other variables (i.e. nodes) given in the graph. In this way we
+obtain directed edges. The class to encode this information is :battmo:`PropFunction`. The properties for the
+class are the following
+
+.. code:: matlab
+
+   classdef PropFunction
+       
+       properties
+           
+           varname             % variable name that will be updated by this function
+           
+           inputvarnames       % list of the variable names that are arguments of the function
+   
+           modelnamespace      % model name space
+           
+           fn                  % function handler for the function to be called
+   
+           functionCallSetupFn % function handler to setup the function call
+           
+       end
+
+A :code:`PropFunction` tells us that the variable with name :code:`varname` will be updated by the function
+:code:`fn` which will only require in its evaluation the value of the variables contained in the list
+:code:`inputvarnames`. In addition, we have the name space of a model where the parameters to evaluate the
+function can be found. Earlier, we explained that most functions need external parameters to be evaluated and
+those are stored in the properties of some model. The location of this model is given by
+:code:`modelnamespace`. The function is going to called automatically in the assembly process (:ref:`step
+2<assembly steps>`). The property :code:`functionCallSetupFn` is used to setup this call. Let us now look at
+the complete listing of the :ref:`thermal model<tempgraph>`
+
+.. literalinclude:: scripts/ThermalModel.m
+   :language: matlab
+
+We have declared three property function using the method :code:`registerPropFunction`
+
+.. note::
+
+   The method :code:`registerPropFunction` offers syntaxic sugar, which is very important to keep the
+   implementation concise. If we did not use any syntaxic sugar, the declaration of the :code:`flux` property
+   function would be as follows
+
+   .. code:: matlab
+
+      
+  
