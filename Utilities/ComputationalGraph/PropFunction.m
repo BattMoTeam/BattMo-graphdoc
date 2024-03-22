@@ -2,14 +2,16 @@ classdef PropFunction
     
     properties
         
-        varname
+        varname             % variable name that will be updated by this function
         
-        inputvarnames
-        modelnamespace 
+        inputvarnames       % list of the variable names that are arguments of the function
+
+        modelnamespace      % model name space
         
-        fn % function handler
+        fn                  % function handler for the function to be called
 
         functionCallSetupFn %  function handler to setup the function call
+        
     end
     
     methods
