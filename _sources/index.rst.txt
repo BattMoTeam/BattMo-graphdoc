@@ -286,6 +286,8 @@ that a user which wants to implement a new model can only focus on the two steps
 We need now to provide the user with a framework for computational graph and functionalities to setup graphs
 easily within this framework. Let review the functionalities we want to include.
 
+.. _reusability:
+
 The overall goals are readibility and reusabililty. For code reusability, we want to be able to reuse in an
 easy way any function that have been implemented in existing models. For the graph framework it implies that
 graphs can always be modified at any level. A modification of an existing model consists of changing its graph
@@ -614,7 +616,8 @@ We obtain the plot we already presented :ref:`above<tempgraph>`
 
 We can use the :code:`printOrderedFunctionCallList` method of the :battmo:`ComputationalGraphTool` class to
 print the sequence of function calls that is used to update all the variables in the model
-:battmo:`ThermalModel`, which examplify how we can automatize the assembly.
+:battmo:`ThermalModel`, which examplify how we can automatize the assembly. The order of the function
+evaluation is computed from the graph structure.
 
 .. code::
 
@@ -625,3 +628,70 @@ print the sequence of function calls that is used to update all the variables in
    state = model.updateAccumTerm(state);
    state = model.updateFlux(state);
    state = model.updateEnergyCons(state);   
+
+Similarly we implement the property functions of the reaction model, see :battmo:`here<ReactionModel>`. The
+corresponding graph is plotted :ref:`above<reacmodelgraph>`
+
+For the sake of the illustration we introduce and :code:`UncoupledReactionThermalModel`, which consists only of
+the following line (see also :battmo:`here <UncoupledReactionThermalModel>`)
+
+.. literalinclude:: scripts/UncoupledReactionThermalModel.m
+   :language: matlab
+
+We can instantiate the model and plot the graph
+
+.. code:: matlab
+
+   model = UncoupledReactionThermalModel
+   cgp = model.cgp
+   cgp.plot
+
+.. figure:: img/uncoupledreactemp.png
+   :target: _images/uncoupledreactemp.png
+   :name: uncoupledreactemp
+   :width: 100%
+   :align: center
+
+   Uncoupled thermal reaction model.
+
+The variable name and graph structures are imported from both the submodels. The name of the model it
+originates from is added to the name of each variable. We can clearly see that the two graphs of the sub-models
+are uncoupled as no edge connect them to each other.
+
+We implement the coupling between the models, as announced :ref:`here<tempreacgraph>`, using the following
+setup (see also :battmo:`here<ReactionThermalModel>`), which coupled the OCP to the temperature and the source
+term of the energy equation to the reaction rate.
+
+.. literalinclude:: scripts/ReactionThermalModel.m
+   :language: matlab
+
+In this case, we obtain the following list of function calls
+
+.. code:: 
+
+   >> model = ReactionThermalModel();
+   >> cgt = model.cgt;
+   >> cgt.printOrderedFunctionCallList;
+   
+   Function call list
+   state = model.updateOCP(state);
+   state.Reaction = model.Reaction.updateReactionRateCoefficient(state.Reaction);
+   state.Thermal = model.Thermal.updateAccumTerm(state.Thermal);
+   state.Thermal = model.Thermal.updateFlux(state.Thermal);
+   state.Reaction = model.Reaction.updateEta(state.Reaction);
+   state.Reaction = model.Reaction.updateReactionRate(state.Reaction);
+   state = model.updateThermalSource(state);
+   state.Thermal = model.Thermal.updateEnergyCons(state.Thermal);      
+
+From this example, we can understand how we can fullfill the requirement we set :ref:`above<reusability>`,
+where we formulate the goal that we want to call a function without have to modify it at all, whereever in the
+model hierarchy the variable that will be updated belongs to. For that, we use simple matlab structure
+mechanism. Here, we sse that the values of the thermal variables (:code:`T`, :code:`flux`, ...) are stored in
+the :code:`Thermal` field of the :code:`state` variable, so that when we send the variable
+:code:`state.Thermal` to the function :code:`updateFlux` (for example), the variables coming from the other
+submodel :code:`Reaction` are stripped off. The function :code:`updateFlux` implemented in the
+:code:`ThermalModel` will only see a state variable with the fields it knows about, locally, at the level of
+the model.
+
+
+

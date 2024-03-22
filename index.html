@@ -343,7 +343,7 @@ primary variables, until convergence. All these three steps can by <strong>autom
 that a user which wants to implement a new model can only focus on the two steps mentioned further up.</p>
 <p>We need now to provide the user with a framework for computational graph and functionalities to setup graphs
 easily within this framework. Let review the functionalities we want to include.</p>
-<p>The overall goals are readibility and reusabililty. For code reusability, we want to be able to reuse in an
+<p id="reusability">The overall goals are readibility and reusabililty. For code reusability, we want to be able to reuse in an
 easy way any function that have been implemented in existing models. For the graph framework it implies that
 graphs can always be modified at any level. A modification of an existing model consists of changing its graph
 and add or replace functions that have to be changed or replace but keeping <strong>all the other functions
@@ -700,7 +700,8 @@ graph.</p>
 </figure>
 <p>We can use the <code class="code docutils literal notranslate"><span class="pre">printOrderedFunctionCallList</span></code> method of the <a class="reference external" href="https://github.com/BattMoTeam/BattMo-graphdoc/blob/graphdoc/Utilities/ComputationalGraph/ComputationalGraphTool.m">ComputationalGraphTool</a> class to
 print the sequence of function calls that is used to update all the variables in the model
-<a class="reference external" href="https://github.com/BattMoTeam/BattMo-graphdoc/blob/graphdoc/GraphDocumentation/scripts/ThermalModel.m">ThermalModel</a>, which examplify how we can automatize the assembly.</p>
+<a class="reference external" href="https://github.com/BattMoTeam/BattMo-graphdoc/blob/graphdoc/GraphDocumentation/scripts/ThermalModel.m">ThermalModel</a>, which examplify how we can automatize the assembly. The order of the function
+evaluation is computed from the graph structure.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">cgt</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">cgt</span>
 <span class="o">&gt;&gt;</span> <span class="n">cgt</span><span class="o">.</span><span class="n">printOrderedFunctionCallList</span>
 
@@ -710,6 +711,105 @@ print the sequence of function calls that is used to update all the variables in
 <span class="n">state</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">updateEnergyCons</span><span class="p">(</span><span class="n">state</span><span class="p">);</span>
 </pre></div>
 </div>
+<p>Similarly we implement the property functions of the reaction model, see <a class="reference external" href="https://github.com/BattMoTeam/BattMo-graphdoc/blob/graphdoc/GraphDocumentation/scripts/ReactionModel.m">here</a>. The
+corresponding graph is plotted <a class="reference internal" href="#reacmodelgraph"><span class="std std-ref">above</span></a></p>
+<p>For the sake of the illustration we introduce and <code class="code docutils literal notranslate"><span class="pre">UncoupledReactionThermalModel</span></code>, which consists only of
+the following line (see also <a class="reference external" href="https://github.com/BattMoTeam/BattMo-graphdoc/blob/graphdoc/GraphDocumentation/scripts/UncoupledReactionThermalModel.m">here</a>)</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="k">classdef</span><span class="w"> </span><span class="n">UncoupledReactionThermalModel</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">BaseModel</span>
+<span class="w">    </span><span class="k">properties</span>
+<span class="w">        </span><span class="n">Reaction</span>
+<span class="w">        </span><span class="n">Thermal</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span><span class="k">methods</span>
+<span class="w">        </span><span class="k">function</span><span class="w"> </span>model<span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nf">UncoupledReactionThermalModel</span><span class="p">()</span>
+<span class="w">            </span><span class="n">model</span><span class="p">.</span><span class="n">Reaction</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">ReactionModel</span><span class="p">();</span>
+<span class="w">            </span><span class="n">model</span><span class="p">.</span><span class="n">Thermal</span><span class="w">  </span><span class="p">=</span><span class="w"> </span><span class="n">ThermalModel</span><span class="p">();</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p>We can instantiate the model and plot the graph</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">UncoupledReactionThermalModel</span>
+<span class="n">cgp</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="n">cgp</span>
+<span class="n">cgp</span><span class="p">.</span><span class="n">plot</span>
+</pre></div>
+</div>
+<figure class="align-center" id="uncoupledreactemp">
+<a class="reference external image-reference" href="_images/uncoupledreactemp.png"><img alt="_images/uncoupledreactemp.png" src="_images/uncoupledreactemp.png" style="width: 100%;" /></a>
+<figcaption>
+<p><span class="caption-text">Uncoupled thermal reaction model.</span><a class="headerlink" href="#uncoupledreactemp" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>The variable name and graph structures are imported from both the submodels. The name of the model it
+originates from is added to the name of each variable. We can clearly see that the two graphs of the sub-models
+are uncoupled as no edge connect them to each other.</p>
+<p>We implement the coupling between the models, as announced <a class="reference internal" href="#tempreacgraph"><span class="std std-ref">here</span></a>, using the following
+setup (see also <a class="reference external" href="https://github.com/BattMoTeam/BattMo-graphdoc/blob/graphdoc/GraphDocumentation/scripts/ReactionThermalModel.m">here</a>), which coupled the OCP to the temperature and the source
+term of the energy equation to the reaction rate.</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="k">classdef</span><span class="w"> </span><span class="n">ReactionThermalModel</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">BaseModel</span>
+
+<span class="w">    </span><span class="k">properties</span>
+
+<span class="w">        </span><span class="n">Reaction</span>
+<span class="w">        </span><span class="n">Thermal</span>
+<span class="w">        </span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="k">methods</span>
+
+<span class="w">        </span><span class="k">function</span><span class="w"> </span>model<span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nf">ReactionThermalModel</span><span class="p">()</span>
+
+<span class="w">            </span><span class="n">model</span><span class="p">.</span><span class="n">Reaction</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">ReactionModel</span><span class="p">();</span>
+<span class="w">            </span><span class="n">model</span><span class="p">.</span><span class="n">Thermal</span><span class="w">  </span><span class="p">=</span><span class="w"> </span><span class="n">ThermalModel</span><span class="p">();</span>
+<span class="w">            </span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">        </span><span class="k">function</span><span class="w"> </span>model<span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nf">registerVarAndPropfuncNames</span><span class="p">(</span>model<span class="p">)</span>
+<span class="w">            </span>
+<span class="w">            </span><span class="c">%% Declaration of the Dynamical Variables and Function of the model</span>
+
+<span class="w">            </span><span class="n">model</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">registerVarAndPropfuncNames</span><span class="p">@</span><span class="n">BaseModel</span><span class="p">(</span><span class="n">model</span><span class="p">);</span>
+
+<span class="w">            </span><span class="n">fn</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">@</span><span class="n">ReactionThermalModel</span><span class="p">.</span><span class="n">updateOCP</span><span class="p">;</span>
+<span class="w">            </span><span class="n">inputnames</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">{{</span><span class="s">&#39;Reaction&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;c_s&#39;</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="s">&#39;Thermal&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;T&#39;</span><span class="p">}};</span>
+<span class="w">            </span><span class="n">model</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="n">registerPropFunction</span><span class="p">({{</span><span class="s">&#39;Reaction&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;OCP&#39;</span><span class="p">},</span><span class="w"> </span><span class="n">fn</span><span class="p">,</span><span class="w"> </span><span class="n">inputnames</span><span class="p">});</span>
+
+<span class="w">            </span><span class="n">fn</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">@</span><span class="n">ReactionThermalModel</span><span class="p">.</span><span class="n">updateThermalSource</span><span class="p">;</span>
+<span class="w">            </span><span class="n">inputnames</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">{{</span><span class="s">&#39;Reaction&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;R&#39;</span><span class="p">}};</span>
+<span class="w">            </span><span class="n">model</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="n">registerPropFunction</span><span class="p">({{</span><span class="s">&#39;Thermal&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;source&#39;</span><span class="p">},</span><span class="w"> </span><span class="n">fn</span><span class="p">,</span><span class="w"> </span><span class="n">inputnames</span><span class="p">});</span>
+<span class="w">            </span>
+<span class="w">        </span><span class="k">end</span>
+
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p>In this case, we obtain the following list of function calls</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">model</span> <span class="o">=</span> <span class="n">ReactionThermalModel</span><span class="p">();</span>
+<span class="o">&gt;&gt;</span> <span class="n">cgt</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">cgt</span><span class="p">;</span>
+<span class="o">&gt;&gt;</span> <span class="n">cgt</span><span class="o">.</span><span class="n">printOrderedFunctionCallList</span><span class="p">;</span>
+
+<span class="n">Function</span> <span class="n">call</span> <span class="nb">list</span>
+<span class="n">state</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">updateOCP</span><span class="p">(</span><span class="n">state</span><span class="p">);</span>
+<span class="n">state</span><span class="o">.</span><span class="n">Reaction</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">Reaction</span><span class="o">.</span><span class="n">updateReactionRateCoefficient</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">Reaction</span><span class="p">);</span>
+<span class="n">state</span><span class="o">.</span><span class="n">Thermal</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">Thermal</span><span class="o">.</span><span class="n">updateAccumTerm</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">Thermal</span><span class="p">);</span>
+<span class="n">state</span><span class="o">.</span><span class="n">Thermal</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">Thermal</span><span class="o">.</span><span class="n">updateFlux</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">Thermal</span><span class="p">);</span>
+<span class="n">state</span><span class="o">.</span><span class="n">Reaction</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">Reaction</span><span class="o">.</span><span class="n">updateEta</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">Reaction</span><span class="p">);</span>
+<span class="n">state</span><span class="o">.</span><span class="n">Reaction</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">Reaction</span><span class="o">.</span><span class="n">updateReactionRate</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">Reaction</span><span class="p">);</span>
+<span class="n">state</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">updateThermalSource</span><span class="p">(</span><span class="n">state</span><span class="p">);</span>
+<span class="n">state</span><span class="o">.</span><span class="n">Thermal</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">Thermal</span><span class="o">.</span><span class="n">updateEnergyCons</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">Thermal</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>From this example, we can understand how we can fullfill the requirement we set <a class="reference internal" href="#reusability"><span class="std std-ref">above</span></a>,
+where we formulate the goal that we want to call a function without have to modify it at all, whereever in the
+model hierarchy the variable that will be updated belongs to. For that, we use simple matlab structure
+mechanism. Here, we sse that the values of the thermal variables (<code class="code docutils literal notranslate"><span class="pre">T</span></code>, <code class="code docutils literal notranslate"><span class="pre">flux</span></code>, …) are stored in
+the <code class="code docutils literal notranslate"><span class="pre">Thermal</span></code> field of the <code class="code docutils literal notranslate"><span class="pre">state</span></code> variable, so that when we send the variable
+<code class="code docutils literal notranslate"><span class="pre">state.Thermal</span></code> to the function <code class="code docutils literal notranslate"><span class="pre">updateFlux</span></code> (for example), the variables coming from the other
+submodel <code class="code docutils literal notranslate"><span class="pre">Reaction</span></code> are stripped off. The function <code class="code docutils literal notranslate"><span class="pre">updateFlux</span></code> implemented in the
+<code class="code docutils literal notranslate"><span class="pre">ThermalModel</span></code> will only see a state variable with the fields it knows about, locally, at the level of
+the model.</p>
 </section>
 </section>
 
