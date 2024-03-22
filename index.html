@@ -40,7 +40,6 @@
           
           <a href="#" class="icon icon-home">
             BattMo
-              <img src="_static/battmologo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -105,7 +104,7 @@ j&amp;= k c_s(1 - c_e)^{\frac12}c_e^\frac12\\
 \text{OCP} &amp;= \hat{\text{OCP}}(c_s)
 \end{align*}</div><p>We have seven variables <span class="math notranslate nohighlight">\(R,\ j, \eta, \text{OCP}, \phi_s, \phi_e, c_s, c_e\)</span>. The dependency graph we
 obtain from the equations above is</p>
-<img alt="_images/reacmodelgraph.png" src="_images/reacmodelgraph.png" />
+<img alt="img/reacmodelgraph.png" src="img/reacmodelgraph.png" />
 <p>This graph has been obtained in BattMo after we implemented the model. We will explain later how this can be
 done (for the impatient, see here)</p>
 <p>The graph is a <a class="reference external" href="https://en.wikipedia.org/wiki/Directed_acyclic_graph">directed acyclic graph</a>, meaning that
@@ -178,7 +177,7 @@ parameter belonging to the model, which we mentioned earlier.</p>
 <div class="math notranslate nohighlight">
 \[\text{OCP} = \hat{\text{OCP}}(c_s, T)\]</div>
 <p>Then, we have to introduce a new node (i.e. variable) in our graph, the temperature <code class="code docutils literal notranslate"><span class="pre">T</span></code>.</p>
-<img alt="_images/reacmodelgraph2.png" src="_images/reacmodelgraph2.png" />
+<img alt="img/reacmodelgraph2.png" src="img/reacmodelgraph2.png" />
 <p>Let us introduce an other model, at least its computational graph. We consider a simple heat equation</p>
 <div class="math notranslate nohighlight">
 \[\alpha T_t = \nabla\cdot(\lambda \nabla T) + q\]</div>
@@ -206,13 +205,13 @@ column, we write the definition they will take after discretization. The operato
 </tbody>
 </table>
 <p>The computational for the temperature model is given by</p>
-<img alt="_images/tempgraph.png" src="_images/tempgraph.png" />
+<img alt="img/tempgraph.png" src="img/tempgraph.png" />
 <p>Having now two models, we can illustrate how we can combine the corresponding computational graph to obtain a
 coupled model. Let us couple the two models in two ways. We include a heat source produced by the chemical
 reaction, as some function of the reaction rate. The effect of the temperature on the chemical reaction is
 included, as we presented earlier, as a additional temperature dependence of the open circuit potential
 <code class="code docutils literal notranslate"><span class="pre">OCP</span></code>. We obtain the following computational graph</p>
-<img alt="_images/tempreacgraph.png" src="_images/tempreacgraph.png" />
+<img alt="img/tempreacgraph.png" src="img/tempreacgraph.png" />
 <p>In the node names, we recognize the origin of variable through a model name, either <code class="code docutils literal notranslate"><span class="pre">Reaction</span></code> or
 <code class="code docutils literal notranslate"><span class="pre">Thermal</span></code>. We will come back later to that.</p>
 <p>With this model, we can setup our first simulation. Given the concentrations and potentials, we want to obtain
@@ -234,7 +233,7 @@ the chemical reaction. We have equations of the form</p>
 <p>where the right-hand side is obtained from the computed reaction rate, following the stoichiometry of the
 chemical reactions.</p>
 <p>The computational grap for each of this equation take the generic form</p>
-<img alt="_images/concgraph.png" src="_images/concgraph.png" />
+<img alt="img/concgraph.png" src="img/concgraph.png" />
 <p>where</p>
 <table class="docutils align-default">
 <colgroup>
@@ -259,7 +258,7 @@ name, we add indices in our notations but this cannot be robustly scaled to larg
 model names and a model hierarchy. This was done already earlier with the <code class="code docutils literal notranslate"><span class="pre">Thermal</span></code> and <code class="code docutils literal notranslate"><span class="pre">Reaction</span></code>
 models. Let us name our two concentration models as <code class="code docutils literal notranslate"><span class="pre">Solid</span></code> and <code class="code docutils literal notranslate"><span class="pre">Elyte</span></code>. We obtain the following
 graph.</p>
-<img alt="_images/concreacgraph.png" src="_images/concreacgraph.png" />
+<img alt="img/concreacgraph.png" src="img/concreacgraph.png" />
 <p>We note that it becomes already difficult to read off the graph and it will become harder and harder as model
 grow. We have developped visualization tool that will help us in exploring the model through their graphs.</p>
 <p>Given <code class="code docutils literal notranslate"><span class="pre">phi_s</span></code> and <code class="code docutils literal notranslate"><span class="pre">phi_e</span></code>, we can solve the problem of computing the evolution of the
@@ -268,10 +267,10 @@ the mass conservation equations.</p>
 <p>Finally, we can couple the model above with with the temperature, by <em>sewing</em> together the graphs. We name the
 previous composite model as <code class="code docutils literal notranslate"><span class="pre">Masses</span></code> and keep the name of <code class="code docutils literal notranslate"><span class="pre">Thermal</span></code> for the thermal model. We
 obtain the following</p>
-<img alt="_images/tempconcreacgraph.png" src="_images/tempconcreacgraph.png" />
+<img alt="img/tempconcreacgraph.png" src="img/tempconcreacgraph.png" />
 <p>New computational graphs are thus obtained by connecting existing graph, using a hierarchy of model. In the
 example above, the model hierarchy is given by</p>
-<img alt="_images/tempconcreacgraphmodel.png" src="_images/tempconcreacgraphmodel.png" />
+<img alt="img/tempconcreacgraphmodel.png" src="img/tempconcreacgraphmodel.png" />
 </section>
 </section>
 
