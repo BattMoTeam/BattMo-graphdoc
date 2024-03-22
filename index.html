@@ -55,6 +55,7 @@
 <li><a class="reference internal" href="#">Computation Graph Model Design ang Assembly</a><ul>
 <li><a class="reference internal" href="#a-simple-introduction-example">A simple introduction example</a></li>
 <li><a class="reference internal" href="#graph-composition">Graph composition</a></li>
+<li><a class="reference internal" href="#graph-setup-and-implementation">Graph Setup and Implementation</a></li>
 </ul>
 </li>
 </ul>
@@ -105,7 +106,12 @@ j&amp;= k c_s(1 - c_e)^{\frac12}c_e^\frac12\\
 \text{OCP} &amp;= \hat{\text{OCP}}(c_s)
 \end{align*}</div><p>We have seven variables <span class="math notranslate nohighlight">\(R,\ j, \eta, \text{OCP}, \phi_s, \phi_e, c_s, c_e\)</span>. The dependency graph we
 obtain from the equations above is</p>
-<img alt="_images/reacmodelgraph.png" src="_images/reacmodelgraph.png" />
+<figure class="align-center" id="reacmodelgraph">
+<a class="reference external image-reference" href="_images/reacmodelgraph.png"><img alt="_images/reacmodelgraph.png" src="_images/reacmodelgraph.png" style="width: 100%;" /></a>
+<figcaption>
+<p><span class="caption-text">Reaction model graph</span><a class="headerlink" href="#reacmodelgraph" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
 <p>This graph has been obtained in BattMo after we implemented the model. We will explain later how this can be
 done (for the impatient, see here)</p>
 <p>The graph is a <a class="reference external" href="https://en.wikipedia.org/wiki/Directed_acyclic_graph">directed acyclic graph</a>, meaning that
@@ -130,7 +136,8 @@ variables and the variables have been chosen by the user in the model because of
 meaning. The user has chosen them from a physical insight, that we want to preserve. Especially when we expand
 the models. In our previous examples, the variables we have introduced have all a name meaningfull for the
 expert in the domains.</p>
-<table class="docutils align-default">
+<blockquote>
+<div><table class="docutils align-default">
 <colgroup>
 <col style="width: 27%" />
 <col style="width: 73%" />
@@ -156,6 +163,7 @@ expert in the domains.</p>
 </tr>
 </tbody>
 </table>
+</div></blockquote>
 <p>A user can inspect a given model first by looking at the graph, recognized the variables that are named
 here. They should be meaningfull to him, as they should have been chosen to correspond to a given domain
 expertise terminology (here electrochemistry).</p>
@@ -178,14 +186,20 @@ parameter belonging to the model, which we mentioned earlier.</p>
 <div class="math notranslate nohighlight">
 \[\text{OCP} = \hat{\text{OCP}}(c_s, T)\]</div>
 <p>Then, we have to introduce a new node (i.e. variable) in our graph, the temperature <code class="code docutils literal notranslate"><span class="pre">T</span></code>.</p>
-<img alt="_images/reacmodelgraph2.png" src="_images/reacmodelgraph2.png" />
+<figure class="align-center" id="reacmodelgraph2">
+<a class="reference external image-reference" href="_images/reacmodelgraph2.png"><img alt="_images/reacmodelgraph2.png" src="_images/reacmodelgraph2.png" style="width: 100%;" /></a>
+<figcaption>
+<p><span class="caption-text">Reaction model graph with added temperature</span><a class="headerlink" href="#reacmodelgraph2" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
 <p>Let us introduce an other model, at least its computational graph. We consider a simple heat equation</p>
 <div class="math notranslate nohighlight">
 \[\alpha T_t = \nabla\cdot(\lambda \nabla T) + q\]</div>
 <p>We introduce in addition to the temperature <code class="code docutils literal notranslate"><span class="pre">T</span></code> the following variable names (nodes) and, in the right
 column, we write the definition they will take after discretization. The operators <code class="code docutils literal notranslate"><span class="pre">div</span></code> and
 <code class="code docutils literal notranslate"><span class="pre">grad</span></code> denotes the discrete differential operators used in the assembly.</p>
-<table class="docutils align-default">
+<blockquote>
+<div><table class="docutils align-default">
 <colgroup>
 <col style="width: 15%" />
 <col style="width: 85%" />
@@ -205,14 +219,25 @@ column, we write the definition they will take after discretization. The operato
 </tr>
 </tbody>
 </table>
+</div></blockquote>
 <p>The computational for the temperature model is given by</p>
-<img alt="_images/tempgraph.png" src="_images/tempgraph.png" />
+<figure class="align-center" id="tempgraph">
+<a class="reference external image-reference" href="_images/tempgraph.png"><img alt="_images/tempgraph.png" src="_images/tempgraph.png" style="width: 100%;" /></a>
+<figcaption>
+<p><span class="caption-text">Temperature model graph</span><a class="headerlink" href="#tempgraph" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
 <p>Having now two models, we can illustrate how we can combine the corresponding computational graph to obtain a
 coupled model. Let us couple the two models in two ways. We include a heat source produced by the chemical
 reaction, as some function of the reaction rate. The effect of the temperature on the chemical reaction is
 included, as we presented earlier, as a additional temperature dependence of the open circuit potential
 <code class="code docutils literal notranslate"><span class="pre">OCP</span></code>. We obtain the following computational graph</p>
-<img alt="_images/tempreacgraph.png" src="_images/tempreacgraph.png" />
+<figure class="align-center" id="tempreacgraph">
+<a class="reference external image-reference" href="_images/tempreacgraph.png"><img alt="_images/tempreacgraph.png" src="_images/tempreacgraph.png" style="width: 100%;" /></a>
+<figcaption>
+<p><span class="caption-text">Coupled Temperature Reaction model graph</span><a class="headerlink" href="#tempreacgraph" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
 <p>In the node names, we recognize the origin of variable through a model name, either <code class="code docutils literal notranslate"><span class="pre">Reaction</span></code> or
 <code class="code docutils literal notranslate"><span class="pre">Thermal</span></code>. We will come back later to that.</p>
 <p>With this model, we can setup our first simulation. Given the concentrations and potentials, we want to obtain
@@ -234,9 +259,15 @@ the chemical reaction. We have equations of the form</p>
 <p>where the right-hand side is obtained from the computed reaction rate, following the stoichiometry of the
 chemical reactions.</p>
 <p>The computational grap for each of this equation take the generic form</p>
-<img alt="_images/concgraph.png" src="_images/concgraph.png" />
+<figure class="align-center" id="concgraph">
+<a class="reference external image-reference" href="_images/concgraph.png"><img alt="_images/concgraph.png" src="_images/concgraph.png" style="width: 100%;" /></a>
+<figcaption>
+<p><span class="caption-text">Concentration model graph</span><a class="headerlink" href="#concgraph" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
 <p>where</p>
-<table class="docutils align-default">
+<blockquote>
+<div><table class="docutils align-default">
 <colgroup>
 <col style="width: 24%" />
 <col style="width: 76%" />
@@ -253,13 +284,19 @@ chemical reactions.</p>
 </tr>
 </tbody>
 </table>
+</div></blockquote>
 <p>Let us now combine this model with the first one, which provided us with te computation of the chemical
 reaction rate. We need two instance of the concentration model. To solve, the issue of <strong>duplicated</strong> variable
 name, we add indices in our notations but this cannot be robustly scaled to large model. Instead, we introduce
 model names and a model hierarchy. This was done already earlier with the <code class="code docutils literal notranslate"><span class="pre">Thermal</span></code> and <code class="code docutils literal notranslate"><span class="pre">Reaction</span></code>
 models. Let us name our two concentration models as <code class="code docutils literal notranslate"><span class="pre">Solid</span></code> and <code class="code docutils literal notranslate"><span class="pre">Elyte</span></code>. We obtain the following
 graph.</p>
-<img alt="_images/concreacgraph.png" src="_images/concreacgraph.png" />
+<figure class="align-center" id="concreacgraph">
+<a class="reference external image-reference" href="_images/concreacgraph.png"><img alt="_images/concreacgraph.png" src="_images/concreacgraph.png" style="width: 100%;" /></a>
+<figcaption>
+<p><span class="caption-text">Coupled reaction-concentration model</span><a class="headerlink" href="#concreacgraph" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
 <p>We note that it becomes already difficult to read off the graph and it will become harder and harder as model
 grow. We have developped visualization tool that will help us in exploring the model through their graphs.</p>
 <p>Given <code class="code docutils literal notranslate"><span class="pre">phi_s</span></code> and <code class="code docutils literal notranslate"><span class="pre">phi_e</span></code>, we can solve the problem of computing the evolution of the
@@ -268,10 +305,411 @@ the mass conservation equations.</p>
 <p>Finally, we can couple the model above with with the temperature, by <em>sewing</em> together the graphs. We name the
 previous composite model as <code class="code docutils literal notranslate"><span class="pre">Masses</span></code> and keep the name of <code class="code docutils literal notranslate"><span class="pre">Thermal</span></code> for the thermal model. We
 obtain the following</p>
-<img alt="_images/tempconcreacgraph.png" src="_images/tempconcreacgraph.png" />
+<figure class="align-center" id="tempconcreacgraph">
+<a class="reference external image-reference" href="_images/tempconcreacgraph.png"><img alt="_images/tempconcreacgraph.png" src="_images/tempconcreacgraph.png" style="width: 100%;" /></a>
+<figcaption>
+<p><span class="caption-text">Coupled Temperature-Concentration-Reaction graph</span><a class="headerlink" href="#tempconcreacgraph" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
 <p>New computational graphs are thus obtained by connecting existing graph, using a hierarchy of model. In the
 example above, the model hierarchy is given by</p>
-<img alt="_images/tempconcreacgraphmodel.png" src="_images/tempconcreacgraphmodel.png" />
+<figure class="align-center" id="tempconcreacgraphmodel">
+<a class="reference external image-reference" href="_images/tempconcreacgraphmodel.png"><img alt="_images/tempconcreacgraphmodel.png" src="_images/tempconcreacgraphmodel.png" style="width: 100%;" /></a>
+<figcaption>
+<p><span class="caption-text">Model hierarchy</span><a class="headerlink" href="#tempconcreacgraphmodel" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>The graph of a parent model is essentially composed of the graphs of its child models with the addition of a
+few new edges which connect the graphs of the child models. The graph of the parent model can also bring its
+own new variables.</p>
+</section>
+<section id="graph-setup-and-implementation">
+<h2>Graph Setup and Implementation<a class="headerlink" href="#graph-setup-and-implementation" title="Permalink to this heading"></a></h2>
+<p>The implementation of a model can be decomposed into two steps.</p>
+<ol class="arabic simple">
+<li><p>We setup the computational graph.</p></li>
+<li><p>We implement the functions corresponding to each node with incoming edges.</p></li>
+</ol>
+<p>Our claim is that this decomposition <strong>breaks the complexity</strong> in the implementation of large coupled
+models. Once the two steps above are done, a Newton loop in our simulator will consist of</p>
+<ol class="arabic simple" id="assembly-steps">
+<li><p>Instantiation of the primary variables (the root nodes) as AD (Automatic Differentiation) variables</p></li>
+<li><p>Evaluation of all the functions in a order that can be infered by the graph, as it gives us the relative
+dependencie between all the variables</p></li>
+<li><p>Assembly of the Jacobian obtained form the residual equations (the tail nodes)</p></li>
+</ol>
+<p>The Jacobian matrix with the residuals can be sent to a Newton solver which will return an update of the
+primary variables, until convergence. All these three steps can by <strong>automatised</strong> as we will see later, so
+that a user which wants to implement a new model can only focus on the two steps mentioned further up.</p>
+<p>We need now to provide the user with a framework for computational graph and functionalities to setup graphs
+easily within this framework. Let review the functionalities we want to include.</p>
+<p>The overall goals are readibility and reusabililty. For code reusability, we want to be able to reuse in an
+easy way any function that have been implemented in existing models. For the graph framework it implies that
+graphs can always be modified at any level. A modification of an existing model consists of changing its graph
+and add or replace functions that have to be changed or replace but keeping <strong>all the other functions
+unchanged</strong>. We should be able to setup our assembly <a class="reference internal" href="#assembly-steps"><span class="std std-ref">step 2</span></a> using these functions
+untouched. We will see how we solve this requirement.</p>
+<p>A graph, in general, is determined by the nodes and edges. Typically a graph description is done by indexing
+the nodes and edges are described by a pair of node index. In our case, the indexing is done internally in
+processing of the model. At the setup level for the user, we want to use variable names (string) because they
+are supposed to have a meaning for the user and a model designer is going to choose those carefully in order to
+enhance the readibility of its model. When, we combine graphs we face the issue of shared names by the two
+graphs. Since the models have been likely implemented independently, we have to deal with this issue. We solve
+it by using a <strong>name space</strong> mechanism. For a given variable name, indices are frequently needed and should be
+supported. A typical example is a chemical system which brings different species, each of them bringing a
+concencentration variable. To get a generic implementation, it is impractical to deal with the names of each of
+the species and we rather use indices, over which it is easy to iterate. A map between species name in index
+can be conveniently introduced. We end up with the following structure for a variable name, a class called
+<code class="code docutils literal notranslate"><span class="pre">VarName</span></code> see <a class="reference external" href="https://github.com/BattMoTeam/BattMo-graphdoc/blob/graphdoc/Utilities/ComputationalGraph/VarName.m">VarName</a> with the following properties</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="k">classdef</span><span class="w"> </span><span class="n">VarName</span>
+
+<span class="w">  </span><span class="k">properties</span>
+
+<span class="w">     </span><span class="n">namespace</span><span class="w"> </span><span class="c">% Cell array of strings</span>
+<span class="w">     </span><span class="n">name</span><span class="w">      </span><span class="c">% String</span>
+<span class="w">     </span><span class="n">dim</span><span class="w">       </span><span class="c">% Integer</span>
+<span class="w">     </span><span class="n">index</span><span class="w">     </span><span class="c">% Array of integer or string &#39;:&#39;</span>
+
+<span class="w">  </span><span class="k">end</span>
+</pre></div>
+</div>
+<p>Within a model (i.e. a graph) all the variables (i.e. nodes) have a unique name. A new model can be created by
+combining existing models. Each of those should be assigned a unique name, which we be added to the name
+space. We end up with a graph of unique names. The process is the same as module import in programming language
+such as Python or Julia.</p>
+<p>We can use the example above to illustrate the mechanism. At the three different model levels
+(<a class="reference internal" href="#reacmodelgraph"><span class="std std-ref">reaction model</span></a>, <a class="reference internal" href="#concreacgraph"><span class="std std-ref">coupled reaction-concentration model</span></a> and
+<a class="reference internal" href="#tempconcreacgraphmodel"><span class="std std-ref">coupled temperature-reaction-concentration model</span></a>), the concentration of the
+solid electrode takes different names</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 59%" />
+<col style="width: 28%" />
+<col style="width: 13%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>model</p></td>
+<td><p>namespace</p></td>
+<td><p>name</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#reacmodelgraph"><span class="std std-ref">reaction</span></a></p></td>
+<td><p><code class="code docutils literal notranslate"><span class="pre">{}</span></code></p></td>
+<td><p><code class="code docutils literal notranslate"><span class="pre">'c_s'</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#concreacgraph"><span class="std std-ref">reaction-concentration</span></a></p></td>
+<td><p><code class="code docutils literal notranslate"><span class="pre">{'Reaction'}</span></code></p></td>
+<td><p><code class="code docutils literal notranslate"><span class="pre">'c_s'</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tempconcreacgraphmodel"><span class="std std-ref">temperature-reaction-concentration</span></a></p></td>
+<td><p><code class="code docutils literal notranslate"><span class="pre">{'Masses',</span> <span class="pre">'Reaction'}</span></code></p></td>
+<td><p><code class="code docutils literal notranslate"><span class="pre">'c_s'</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>We use two instances of the <a class="reference internal" href="#concgraph"><span class="std std-ref">concentration model</span></a> in the <a class="reference internal" href="#concreacgraph"><span class="std std-ref">coupled reaction-concentration
+model</span></a>. Namespace is needed to distinguish between those,</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 63%" />
+<col style="width: 37%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>namespace</p></td>
+<td><p>name</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">{'Solid'}</span></code></p></td>
+<td><p><code class="code docutils literal notranslate"><span class="pre">c</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">{'Elyte'}</span></code></p></td>
+<td><p><code class="code docutils literal notranslate"><span class="pre">c</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>Let us introduce the code functionalities for constructing models. For the moment, we focus on the the nodes
+(variable names). Later, we will look at the edges (functional dependencies). We use the <a class="reference internal" href="#tempgraph"><span class="std std-ref">temperature
+model</span></a> as an example. The class <a class="reference external" href="https://github.com/BattMoTeam/BattMo-graphdoc/blob/graphdoc/Utilities/BaseModel.m">BaseModel</a> is, at its name indicates, the base class for
+all models. We will introduce gradually the most usefull methods for this class. For our temperature model, we
+start with</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="k">classdef</span><span class="w"> </span><span class="n">ThermalModel</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">BaseModel</span>
+
+<span class="w">    </span><span class="k">methods</span>
+
+<span class="w">        </span><span class="k">function</span><span class="w"> </span>model<span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nf">registerVarAndPropfuncNames</span><span class="p">(</span>model<span class="p">)</span>
+
+<span class="w">            </span><span class="c">%% Declaration of the Dynamical Variables and Function of the model</span>
+<span class="w">            </span><span class="c">% (setup of varnameList and propertyFunctionList)</span>
+
+<span class="w">            </span><span class="n">model</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">registerVarAndPropfuncNames</span><span class="p">@</span><span class="n">BaseModel</span><span class="p">(</span><span class="n">model</span><span class="p">);</span>
+
+<span class="w">            </span><span class="n">varnames</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">{};</span>
+<span class="w">            </span><span class="c">% Temperature</span>
+<span class="w">            </span><span class="n">varnames</span><span class="p">{</span><span class="k">end</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">}</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;T&#39;</span><span class="p">;</span>
+<span class="w">            </span><span class="c">% Accumulation term</span>
+<span class="w">            </span><span class="n">varnames</span><span class="p">{</span><span class="k">end</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">}</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;accumTerm&#39;</span><span class="p">;</span>
+<span class="w">            </span><span class="c">% Flux flux</span>
+<span class="w">            </span><span class="n">varnames</span><span class="p">{</span><span class="k">end</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">}</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;flux&#39;</span><span class="p">;</span>
+<span class="w">            </span><span class="c">% Heat source</span>
+<span class="w">            </span><span class="n">varnames</span><span class="p">{</span><span class="k">end</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">}</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;source&#39;</span><span class="p">;</span>
+<span class="w">            </span><span class="c">% Energy conservation</span>
+<span class="w">            </span><span class="n">varnames</span><span class="p">{</span><span class="k">end</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">}</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;energyCons&#39;</span><span class="p">;</span>
+
+<span class="w">            </span><span class="n">model</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="n">registerVarNames</span><span class="p">(</span><span class="n">varnames</span><span class="p">);</span>
+
+<span class="w">        </span><span class="k">end</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p>The most impatient can have a look of the complete implementation of <a class="reference external" href="https://github.com/BattMoTeam/BattMo-graphdoc/blob/graphdoc/GraphDocumentation/scripts/ThermalModel.m">ThermalModel</a>. The method
+<code class="code docutils literal notranslate"><span class="pre">registerVarAndPropfuncNames</span></code> is used to setup all that deals with the graph in a given model. We called
+the method <code class="code docutils literal notranslate"><span class="pre">registerVarNames</span></code> to add a list of nodes in our graph given by <code class="code docutils literal notranslate"><span class="pre">varnames</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The variable name is given by a single string here and not a instance of <a class="reference external" href="https://github.com/BattMoTeam/BattMo-graphdoc/blob/graphdoc/Utilities/ComputationalGraph/VarName.m">VarName</a>. This is a
+syntaxic sugar and internally the variable name <code class="code docutils literal notranslate"><span class="pre">T</span></code> is converted to <code class="code docutils literal notranslate"><span class="pre">VarName({},</span> <span class="pre">'T',</span> <span class="pre">1,</span> <span class="pre">':')</span></code></p>
+<p>To lighten the graph setup, we have introduced at several places syntaxic sugar.</p>
+</div>
+<p>We can now instantiate the model, setup the computational graph. The graph is given as a
+<a class="reference external" href="https://github.com/BattMoTeam/BattMo-graphdoc/blob/graphdoc/Utilities/ComputationalGraph/ComputationalGraphTool.m">ComputationalGraphTool</a> class instance. This class provides some computational and inspection methods
+that acts on the graph.</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">ThermalModel</span><span class="p">();</span>
+<span class="n">model</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="n">setupComputationalGraph</span><span class="p">();</span>
+<span class="n">cgt</span><span class="w">   </span><span class="p">=</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="n">computationalGraph</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>We have written a shortcut for the two last lines</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">cgt</span><span class="w"> </span><span class="p">=</span><span class="w">  </span><span class="n">model</span><span class="p">.</span><span class="n">cgt</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>When the computational graph is setup, the property <code class="code docutils literal notranslate"><span class="pre">varNameList</span></code> of <a class="reference external" href="https://github.com/BattMoTeam/BattMo-graphdoc/blob/graphdoc/Utilities/BaseModel.m">BaseModel</a> is populated
+with <a class="reference external" href="https://github.com/BattMoTeam/BattMo-graphdoc/blob/graphdoc/Utilities/ComputationalGraph/VarName.m">VarName</a> variables. We will rarely look at this list directly. Instead, we use the method
+<code class="code docutils literal notranslate"><span class="pre">printVarNames</span></code> in <a class="reference external" href="https://github.com/BattMoTeam/BattMo-graphdoc/blob/graphdoc/Utilities/ComputationalGraph/ComputationalGraphTool.m">ComputationalGraphTool</a> which, as its name indicates, print the variables
+that have been registered.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">cgt</span><span class="o">.</span><span class="n">printVarNames</span><span class="p">()</span>
+
+<span class="n">T</span>
+<span class="n">source</span>
+<span class="n">accumTerm</span>
+<span class="n">flux</span>
+<span class="n">energyCons</span>
+</pre></div>
+</div>
+<p>Similary, we setup a <a class="reference internal" href="#reacmodelgraph"><span class="std std-ref">reaction model</span></a> as follows</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="k">classdef</span><span class="w"> </span><span class="n">ReactionModel</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">BaseModel</span>
+
+<span class="w">    </span><span class="k">methods</span>
+
+<span class="w">        </span><span class="k">function</span><span class="w"> </span>model<span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nf">registerVarAndPropfuncNames</span><span class="p">(</span>model<span class="p">)</span>
+
+<span class="w">            </span><span class="n">model</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">registerVarAndPropfuncNames</span><span class="p">@</span><span class="n">BaseModel</span><span class="p">(</span><span class="n">model</span><span class="p">);</span>
+
+<span class="w">            </span><span class="n">varnames</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">{};</span>
+<span class="w">            </span><span class="c">% potential in electrode</span>
+<span class="w">            </span><span class="n">varnames</span><span class="p">{</span><span class="k">end</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">}</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;phi_s&#39;</span><span class="p">;</span>
+<span class="w">            </span><span class="c">% charge carrier concentration in electrode - value at surface</span>
+<span class="w">            </span><span class="n">varnames</span><span class="p">{</span><span class="k">end</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">}</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;c_s&#39;</span><span class="p">;</span>
+<span class="w">            </span><span class="c">% potential in electrolyte</span>
+<span class="w">            </span><span class="n">varnames</span><span class="p">{</span><span class="k">end</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">}</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;phi_e&#39;</span><span class="p">;</span>
+<span class="w">            </span><span class="c">% charge carrier concentration in electrolyte</span>
+<span class="w">            </span><span class="n">varnames</span><span class="p">{</span><span class="k">end</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">}</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;c_e&#39;</span><span class="p">;</span>
+<span class="w">            </span><span class="c">% Electrode over potential</span>
+<span class="w">            </span><span class="n">varnames</span><span class="p">{</span><span class="k">end</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">}</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;eta&#39;</span><span class="p">;</span>
+<span class="w">            </span><span class="c">% Reaction rate [mol s^-1 m^-2]</span>
+<span class="w">            </span><span class="n">varnames</span><span class="p">{</span><span class="k">end</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">}</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;R&#39;</span><span class="p">;</span>
+<span class="w">            </span><span class="c">% OCP [V]</span>
+<span class="w">            </span><span class="n">varnames</span><span class="p">{</span><span class="k">end</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">}</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;OCP&#39;</span><span class="p">;</span>
+<span class="w">            </span><span class="c">% Reaction rate coefficient [A m^-2]</span>
+<span class="w">            </span><span class="n">varnames</span><span class="p">{</span><span class="k">end</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">}</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;j&#39;</span><span class="p">;</span>
+
+<span class="w">            </span><span class="n">model</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="n">registerVarNames</span><span class="p">(</span><span class="n">varnames</span><span class="p">);</span>
+
+<span class="w">        </span><span class="k">end</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p>(For the impatient, the full implementation which includes the properties is available
+<a class="reference external" href="https://github.com/BattMoTeam/BattMo-graphdoc/blob/graphdoc/GraphDocumentation/scripts/ReactionModel.m">here</a>). As expected, we obtain the following output</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">model</span> <span class="o">=</span> <span class="n">ReactionModel</span><span class="p">();</span>
+<span class="o">&gt;&gt;</span> <span class="n">cgt</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">cgt</span><span class="p">;</span>
+<span class="o">&gt;&gt;</span> <span class="n">cgt</span><span class="o">.</span><span class="n">printVarNames</span>
+
+<span class="n">phi_s</span>
+<span class="n">c_s</span>
+<span class="n">phi_e</span>
+<span class="n">c_e</span>
+<span class="n">OCP</span>
+<span class="n">j</span>
+<span class="n">eta</span>
+<span class="n">R</span>
+</pre></div>
+</div>
+<p>Let us now couple the two models. We introduce a new model which has in its properties an instance of the
+<code class="code docutils literal notranslate"><span class="pre">ReactionModel</span></code> and of the <code class="code docutils literal notranslate"><span class="pre">ThermalModel</span></code>. The name of the properties is use to determine the
+namespace. We write</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="k">classdef</span><span class="w"> </span><span class="n">ReactionThermalModel</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">BaseModel</span>
+
+<span class="w">    </span><span class="k">properties</span>
+
+<span class="w">        </span><span class="n">Reaction</span>
+<span class="w">        </span><span class="n">Thermal</span>
+
+<span class="w">    </span><span class="k">end</span>
+
+<span class="w">    </span><span class="k">methods</span>
+
+<span class="w">        </span><span class="k">function</span><span class="w"> </span>model<span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nf">ReactionThermalModel</span><span class="p">()</span>
+
+<span class="w">            </span><span class="n">model</span><span class="p">.</span><span class="n">Reaction</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">ReactionModel</span><span class="p">();</span>
+<span class="w">            </span><span class="n">model</span><span class="p">.</span><span class="n">Thermal</span><span class="w">  </span><span class="p">=</span><span class="w"> </span><span class="n">ThermalModel</span><span class="p">();</span>
+
+<span class="w">        </span><span class="k">end</span>
+
+<span class="w">    </span><span class="k">end</span>
+
+<span class="k">end</span>
+</pre></div>
+</div>
+<p>We can already instantiate this model (for the impatient, the full model setup is available <a class="reference external" href="https://github.com/BattMoTeam/BattMo-graphdoc/blob/graphdoc/GraphDocumentation/scripts/ReactionThermalModel.m">here</a>).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">model</span> <span class="o">=</span> <span class="n">ReactionThermalModel</span><span class="p">();</span>
+<span class="o">&gt;&gt;</span> <span class="n">cgt</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">cgt</span><span class="p">;</span>
+<span class="o">&gt;&gt;</span> <span class="n">cgt</span><span class="o">.</span><span class="n">printVarNames</span><span class="p">();</span>
+
+<span class="n">Reaction</span><span class="o">.</span><span class="n">phi_s</span>
+<span class="n">Reaction</span><span class="o">.</span><span class="n">c_s</span>
+<span class="n">Reaction</span><span class="o">.</span><span class="n">phi_e</span>
+<span class="n">Reaction</span><span class="o">.</span><span class="n">c_e</span>
+<span class="n">Thermal</span><span class="o">.</span><span class="n">T</span>
+<span class="n">Reaction</span><span class="o">.</span><span class="n">OCP</span>
+<span class="n">Reaction</span><span class="o">.</span><span class="n">j</span>
+<span class="n">Thermal</span><span class="o">.</span><span class="n">accumTerm</span>
+<span class="n">Thermal</span><span class="o">.</span><span class="n">flux</span>
+<span class="n">Reaction</span><span class="o">.</span><span class="n">eta</span>
+<span class="n">Reaction</span><span class="o">.</span><span class="n">R</span>
+<span class="n">Thermal</span><span class="o">.</span><span class="n">source</span>
+<span class="n">Thermal</span><span class="o">.</span><span class="n">energyCons</span>
+</pre></div>
+</div>
+<p>We now observe how the new model has all the variables from both the sub models and they have been assigned a
+namespace which prevents ambiguities. In the printed form above, the name space components are joined with a
+dot delimiter and added in front of the name. The <a class="reference external" href="https://github.com/BattMoTeam/BattMo-graphdoc/blob/graphdoc/Utilities/ComputationalGraph/VarName.m">VarName</a> variable that corresponds to the first
+name in the printed list above is <code class="code docutils literal notranslate"><span class="pre">VarName({'Reaction'},</span> <span class="pre">'phi_s')</span></code></p>
+<p>Let us now look at how we declare the edges, with corresponds for us to the function that update some of the
+variables. For some of the variables, we declare the fact that the variable will be updated by calling a
+function where the arguments are given by other variables (i.e. nodes) given in the graph. In this way we
+obtain directed edges. The class to encode this information is <a class="reference external" href="https://github.com/BattMoTeam/BattMo-graphdoc/blob/graphdoc/Utilities/ComputationalGraph/PropFunction.m">PropFunction</a>. The properties for the
+class are the following</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="k">classdef</span><span class="w"> </span><span class="n">PropFunction</span>
+
+<span class="w">    </span><span class="k">properties</span>
+
+<span class="w">        </span><span class="n">varname</span><span class="w">             </span><span class="c">% variable name that will be updated by this function</span>
+
+<span class="w">        </span><span class="n">inputvarnames</span><span class="w">       </span><span class="c">% list of the variable names that are arguments of the function</span>
+
+<span class="w">        </span><span class="n">modelnamespace</span><span class="w">      </span><span class="c">% model name space</span>
+
+<span class="w">        </span><span class="n">fn</span><span class="w">                  </span><span class="c">% function handler for the function to be called</span>
+
+<span class="w">        </span><span class="n">functionCallSetupFn</span><span class="w"> </span><span class="c">% function handler to setup the function call</span>
+
+<span class="w">    </span><span class="k">end</span>
+</pre></div>
+</div>
+<p>A <code class="code docutils literal notranslate"><span class="pre">PropFunction</span></code> tells us that the variable with name <code class="code docutils literal notranslate"><span class="pre">varname</span></code> will be updated by the function
+<code class="code docutils literal notranslate"><span class="pre">fn</span></code> which will only require in its evaluation the value of the variables contained in the list
+<code class="code docutils literal notranslate"><span class="pre">inputvarnames</span></code>. In addition, we have the name space of a model where the parameters to evaluate the
+function can be found. Earlier, we explained that most functions need external parameters to be evaluated and
+those are stored in the properties of some model. The location of this model is given by
+<code class="code docutils literal notranslate"><span class="pre">modelnamespace</span></code>. The function is going to called automatically in the assembly process (<a class="reference internal" href="#assembly-steps"><span class="std std-ref">step
+2</span></a>). The property <code class="code docutils literal notranslate"><span class="pre">functionCallSetupFn</span></code> is used to setup this call. Let us now look at
+the complete listing of the <a class="reference internal" href="#tempgraph"><span class="std std-ref">thermal model</span></a></p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="k">classdef</span><span class="w"> </span><span class="n">ThermalModel</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">BaseModel</span>
+
+<span class="w">    </span><span class="k">methods</span>
+
+<span class="w">        </span><span class="k">function</span><span class="w"> </span>model<span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nf">registerVarAndPropfuncNames</span><span class="p">(</span>model<span class="p">)</span>
+<span class="w">            </span>
+<span class="w">            </span><span class="n">model</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">registerVarAndPropfuncNames</span><span class="p">@</span><span class="n">BaseModel</span><span class="p">(</span><span class="n">model</span><span class="p">);</span>
+<span class="w">            </span>
+<span class="w">            </span><span class="n">varnames</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">{};</span>
+<span class="w">            </span><span class="c">% Temperature</span>
+<span class="w">            </span><span class="n">varnames</span><span class="p">{</span><span class="k">end</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">}</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;T&#39;</span><span class="p">;</span>
+<span class="w">            </span><span class="c">% Accumulation term</span>
+<span class="w">            </span><span class="n">varnames</span><span class="p">{</span><span class="k">end</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">}</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;accumTerm&#39;</span><span class="p">;</span>
+<span class="w">            </span><span class="c">% Flux flux</span>
+<span class="w">            </span><span class="n">varnames</span><span class="p">{</span><span class="k">end</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">}</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;flux&#39;</span><span class="p">;</span>
+<span class="w">            </span><span class="c">% Heat source</span>
+<span class="w">            </span><span class="n">varnames</span><span class="p">{</span><span class="k">end</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">}</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;source&#39;</span><span class="p">;</span>
+<span class="w">            </span><span class="c">% Energy conservation</span>
+<span class="w">            </span><span class="n">varnames</span><span class="p">{</span><span class="k">end</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">}</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;energyCons&#39;</span><span class="p">;</span>
+<span class="w">            </span>
+<span class="w">            </span><span class="n">model</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="n">registerVarNames</span><span class="p">(</span><span class="n">varnames</span><span class="p">);</span>
+<span class="w">            </span>
+<span class="w">            </span><span class="n">fn</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">@</span><span class="n">ThermalModel</span><span class="p">.</span><span class="n">updateFlux</span><span class="p">;</span>
+<span class="w">            </span><span class="n">model</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="n">registerPropFunction</span><span class="p">({</span><span class="s">&#39;flux&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">fn</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="s">&#39;T&#39;</span><span class="p">}});</span>
+
+<span class="w">            </span><span class="n">fn</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">@</span><span class="n">ThermalModel</span><span class="p">.</span><span class="n">updateAccumTerm</span><span class="p">;</span>
+<span class="w">            </span><span class="n">model</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="n">registerPropFunction</span><span class="p">({</span><span class="s">&#39;accumTerm&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">fn</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="s">&#39;T&#39;</span><span class="p">}});</span>
+<span class="w">            </span>
+<span class="w">            </span><span class="n">fn</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">@</span><span class="n">ThermalModel</span><span class="p">.</span><span class="n">updateEnergyCons</span><span class="p">;</span>
+<span class="w">            </span><span class="n">inputnames</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="s">&#39;accumTerm&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;flux&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;source&#39;</span><span class="p">};</span><span class="w">            </span>
+<span class="w">            </span><span class="n">model</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="n">registerPropFunction</span><span class="p">({</span><span class="s">&#39;energyCons&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">fn</span><span class="p">,</span><span class="w"> </span><span class="n">inputnames</span><span class="p">});</span>
+
+<span class="w">            </span>
+<span class="w">        </span><span class="k">end</span>
+
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p>We have declared three property function using the method <code class="code docutils literal notranslate"><span class="pre">registerPropFunction</span></code></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The method <code class="code docutils literal notranslate"><span class="pre">registerPropFunction</span></code> offers syntaxic sugar, which is very important to keep the
+implementation concise. If we did not use any syntaxic sugar, the declaration of the <code class="code docutils literal notranslate"><span class="pre">flux</span></code> property
+function would be as follows</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">fn</span><span class="w">            </span><span class="p">=</span><span class="w"> </span><span class="p">@</span><span class="n">ThermalModel</span><span class="p">.</span><span class="n">updateFlux</span><span class="p">;</span>
+<span class="n">inputvarnames</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="n">VarName</span><span class="p">({},</span><span class="w"> </span><span class="s">&#39;T&#39;</span><span class="p">)};</span>
+<span class="n">varnname</span><span class="w">      </span><span class="p">=</span><span class="w"> </span><span class="n">VarName</span><span class="p">({},</span><span class="w"> </span><span class="s">&#39;flux&#39;</span><span class="p">);</span>
+
+<span class="n">propfunction</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">PropFunction</span><span class="p">(</span><span class="n">varname</span><span class="p">,</span><span class="w"> </span><span class="n">fn</span><span class="p">,</span><span class="w"> </span><span class="n">inputvarnames</span><span class="p">,</span><span class="w"> </span><span class="p">{});</span>
+
+<span class="n">model</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="n">registerPropFunction</span><span class="p">(</span><span class="n">propfunction</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<p>We can instantiate this model and use the <a class="reference external" href="https://github.com/BattMoTeam/BattMo-graphdoc/blob/graphdoc/Utilities/ComputationalGraph/ComputationalGraphPlot.m">ComputationalGraphPlot</a> tool to visualize the resulting
+graph.</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">ThermalModel</span><span class="p">();</span>
+<span class="n">cgp</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="n">cgp</span><span class="p">();</span><span class="w"> </span><span class="c">% &quot;cgp&quot; stands for &quot;computational graph plot&quot;</span>
+<span class="n">cgp</span><span class="p">.</span><span class="n">plot</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>We obtain the plot we already presented <a class="reference internal" href="#tempgraph"><span class="std std-ref">above</span></a></p>
+<figure class="align-center" id="tempgraphcopy">
+<a class="reference external image-reference" href="_images/tempgraph.png"><img alt="_images/tempgraph.png" src="_images/tempgraph.png" style="width: 100%;" /></a>
+<figcaption>
+<p><span class="caption-text">Temperature model graph</span><a class="headerlink" href="#tempgraphcopy" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>We can use the <code class="code docutils literal notranslate"><span class="pre">printOrderedFunctionCallList</span></code> method of the <a class="reference external" href="https://github.com/BattMoTeam/BattMo-graphdoc/blob/graphdoc/Utilities/ComputationalGraph/ComputationalGraphTool.m">ComputationalGraphTool</a> class to
+print the sequence of function calls that is used to update all the variables in the model
+<a class="reference external" href="https://github.com/BattMoTeam/BattMo-graphdoc/blob/graphdoc/GraphDocumentation/scripts/ThermalModel.m">ThermalModel</a>, which examplify how we can automatize the assembly.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">cgt</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">cgt</span>
+<span class="o">&gt;&gt;</span> <span class="n">cgt</span><span class="o">.</span><span class="n">printOrderedFunctionCallList</span>
+
+<span class="n">Function</span> <span class="n">call</span> <span class="nb">list</span>
+<span class="n">state</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">updateAccumTerm</span><span class="p">(</span><span class="n">state</span><span class="p">);</span>
+<span class="n">state</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">updateFlux</span><span class="p">(</span><span class="n">state</span><span class="p">);</span>
+<span class="n">state</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">updateEnergyCons</span><span class="p">(</span><span class="n">state</span><span class="p">);</span>
+</pre></div>
+</div>
 </section>
 </section>
 
