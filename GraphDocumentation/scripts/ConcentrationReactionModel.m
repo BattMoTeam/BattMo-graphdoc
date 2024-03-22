@@ -3,8 +3,8 @@ classdef ConcentrationReactionModel < BaseModel
     properties
 
         Reaction
-        ConcS
-        ConcE
+        Solid
+        Elyte
         
     end
     
@@ -13,8 +13,8 @@ classdef ConcentrationReactionModel < BaseModel
         function model = ConcentrationReactionModel()
 
             model.Reaction = ReactionModel();
-            model.ConcS    = ConcentrationModel();
-            model.ConcE    = ConcentrationModel();
+            model.Solid    = ConcentrationModel();
+            model.Elyte    = ConcentrationModel();
             
         end
         
@@ -26,15 +26,15 @@ classdef ConcentrationReactionModel < BaseModel
 
             fn = @ConcentrationReactionModel.updateConcentrationSource;
             inputnames = {{'Reaction', 'R'}};
-            model = model.registerPropFunction({{'ConcS', 'source'}, fn, inputnames});
-            model = model.registerPropFunction({{'ConcE', 'source'}, fn, inputnames});
+            model = model.registerPropFunction({{'Solid', 'source'}, fn, inputnames});
+            model = model.registerPropFunction({{'Elyte', 'source'}, fn, inputnames});
             
             fn = @ConcentrationReactionModel.updateReactionConcentrationE;
-            inputnames = {{'ConcE', 'c'}};
+            inputnames = {{'Elyte', 'c'}};
             model = model.registerPropFunction({{'Reaction', 'c_e'}, fn, inputnames});
 
             fn = @ConcentrationReactionModel.updateReactionConcentrationS;
-            inputnames = {{'ConcS', 'c'}};
+            inputnames = {{'Solid', 'c'}};
             model = model.registerPropFunction({{'Reaction', 'c_s'}, fn, inputnames});
 
         end

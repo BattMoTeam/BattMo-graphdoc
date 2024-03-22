@@ -84,14 +84,134 @@ Graph composition
 =================
 
 This model representation as a graph brings also **flexibility** in model building and in particular **code
-reusability**.
+reusability**. A user who wants to modify an existing model will typically be interested in keeping most of the
+existing models, and reuse the variable update functions that are been defined there. Looking at the graph, we
+can understand the dependency easily and identify the part that should be changed in the model. In some cases,
+the dependency graph may not changed, only a different function should be called to update a variable. For
+example, the exchange current density function :math:`j` rarely obeys the ideal case presented above but is a
+given tabulated function,
+
+.. math::
+
+   j(c_e, c_s) = \hat{j}(c_s, c_s)
+
+
+where :math:`\hat{j}` is a given function the user has set up. Such function is an example of a functional
+parameter belonging to the model, which we mentioned earlier.
+
+Continuing with the same example, we may introduce a temperature dependency in the OCP function. We have
+
+.. math::
+
+   \text{OCP} = \hat{\text{OCP}}(c_s, T)
+
+Then, we have to introduce a new node (i.e. variable) in our graph, the temperature :code:`T`.
+
+.. image:: img/reacmodelgraph2.png
+
+Let us introduce an other model, at least its computational graph. We consider a simple heat equation
+
+.. math::
+
+   \alpha T_t = \nabla\cdot(\lambda \nabla T) + q
+
+
+We introduce in addition to the temperature :code:`T` the following variable names (nodes) and, in the right
+column, we write the definition they will take after discretization. The operators :code:`div` and
+:code:`grad` denotes the discrete differential operators used in the assembly.
+
++------------+--------------------------------------------------------------------+
+| accumTerm  | :math:`\alpha\frac{T - T^0}{\Delta t}`                             |
++------------+--------------------------------------------------------------------+
+| flux       | :math:`-\lambda\text{grad}(T)`                                     |
++------------+--------------------------------------------------------------------+
+| sourceTerm | :math:`q`                                                          |
++------------+--------------------------------------------------------------------+
+| energyCons | :math:`\text{accumTerm} + \text{div}(\text{flux}) + \text{source}` |
++------------+--------------------------------------------------------------------+
+
+The computational for the temperature model is given by
+
+.. image:: img/tempgraph.png
+
+Having now two models, we can illustrate how we can combine the corresponding computational graph to obtain a
+coupled model. Let us couple the two models in two ways. We include a heat source produced by the chemical
+reaction, as some function of the reaction rate. The effect of the temperature on the chemical reaction is
+included, as we presented earlier, as a additional temperature dependence of the open circuit potential
+:code:`OCP`. We obtain the following computational graph
+
+.. image:: img/tempreacgraph.png
+
+In the node names, we recognize the origin of variable through a model name, either :code:`Reaction` or
+:code:`Thermal`. We will come back later to that.
+
+With this model, we can setup our first simulation. Given the concentrations and potentials, we want to obtain
+the temperature, which can only obtained implicitely by solving the energy equation. Looking at the graph, we
+find that the root variables are :code:`Thermal.T`, :code:`Reaction.c_s`, :code:`Reaction.phi_s`,
+:code:`Reaction.c_e`, :code:`Reaction.phi_e`. The tail variable is the energy conservation equation
+:code:`energyCons`. A priori, the system looks well-posed with same number of unknown and equation (one of
+each). At this stage, we want our implementation to automatically detects the primary variables (the root node,
+:code:`T`) and the equations (the tail node, :code:`energyCons`) and to proceed with the assembly by traversing
+the graph. We will later how it is done.
+
+To conclude this example, we introduce a model for the concentrations and make them time dependent. In the
+earlier model, the concentrations were kept constant because, for example, access to an infinite reservoir of
+the chemical species. Now, we consider the case of a closed reservoir and the composition evolve accordingly to
+the chemical reaction. We have equations of the form
+
+.. math::
+
+   \begin{align*}
+   \frac{dc_s}{dt} &= R_s, & \frac{dc_r}{dt} &= R_e 
+   \end{align*}
+   
+where the right-hand side is obtained from the computed reaction rate, following the stoichiometry of the
+chemical reactions.
+
+The computational grap for each of this equation take the generic form
+
+.. image:: img/concgraph.png
+
+where
+
++------------+--------------------------------------+
+| masssAccum | :math:`\frac{c - c^0}{\Delta t}`     |
++------------+--------------------------------------+
+| source     | :math:`R`                            |
++------------+--------------------------------------+
+| massCons   | :math:`\frac{c - c^0}{\Delta t} - R` |
++------------+--------------------------------------+
+
+Let us now combine this model with the first one, which provided us with te computation of the chemical
+reaction rate. We need two instance of the concentration model. To solve, the issue of **duplicated** variable
+name, we add indices in our notations but this cannot be robustly scaled to large model. Instead, we introduce
+model names and a model hierarchy. This was done already earlier with the :code:`Thermal` and :code:`Reaction`
+models. Let us name our two concentration models as :code:`Solid` and :code:`Elyte`. We obtain the following
+graph.
+
+.. image:: img/concreacgraph.png 
+
+We note that it becomes already difficult to read off the graph and it will become harder and harder as model
+grow. We have developped visualization tool that will help us in exploring the model through their graphs.
+
+Given :code:`phi_s` and :code:`phi_e`, we can solve the problem of computing the evolution of the
+concentrations. The *root* nodes are the two concentrations (the potentials are known) and the *tail* nodes are
+the mass conservation equations.
+
+Finally, we can couple the model above with with the temperature, by *sewing* together the graphs. We name the
+previous composite model as :code:`Masses` and keep the name of :code:`Thermal` for the thermal model. We
+obtain the following
+
+.. image:: img/tempconcreacgraph.png
+
+New computational graphs are thus obtained by connecting existing graph, using a hierarchy of model. In the
+example above, the model hierarchy is given by
+
+.. image:: img/tempconcreacgraphmodel.png
 
 
 
 
 
-
-
-
-
-
+           
+   

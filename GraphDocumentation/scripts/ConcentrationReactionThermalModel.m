@@ -2,7 +2,7 @@ classdef ConcentrationReactionThermalModel < BaseModel
 
     properties
 
-        ConcReac
+        Masses
         Thermal
         
     end
@@ -11,8 +11,8 @@ classdef ConcentrationReactionThermalModel < BaseModel
 
         function model = ConcentrationReactionThermalModel()
 
-            model.ConcReac = ConcentrationReactionModel();
-            model.Thermal  = ThermalModel();
+            model.Masses  = ConcentrationReactionModel();
+            model.Thermal = ThermalModel();
             
         end
 
@@ -23,11 +23,11 @@ classdef ConcentrationReactionThermalModel < BaseModel
             model = registerVarAndPropfuncNames@BaseModel(model);
 
             fn = @ConcentrationReactionThermalModel.updateOCP;
-            inputnames = {{'ConcReac', 'Reaction', 'c_s'}, {'Thermal', 'T'}};
-            model = model.registerPropFunction({{'ConcReac', 'Reaction', 'OCP'}, fn, inputnames});
+            inputnames = {{'Masses', 'Reaction', 'c_s'}, {'Thermal', 'T'}};
+            model = model.registerPropFunction({{'Masses', 'Reaction', 'OCP'}, fn, inputnames});
 
             fn = @ConcentrationReactionThermalModel.updateThermalSource;
-            inputnames = {{'ConcReac', 'Reaction', 'R'}};
+            inputnames = {{'Masses', 'Reaction', 'R'}};
             model = model.registerPropFunction({{'Thermal', 'source'}, fn, inputnames});
             
         end
