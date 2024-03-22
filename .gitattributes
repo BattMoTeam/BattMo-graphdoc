@@ -3,6 +3,7 @@
 *.png filter=lfs diff=lfs merge=lfs -text
  
 Documentation/**/*.png filter= diff= merge= text
+GraphDocumentation/**/*.png filter= diff= merge= text
 
 *.mlx binary
 *.ipynb binary
