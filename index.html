@@ -86,12 +86,12 @@
              
   <section id="computation-graph-model-design-ang-assembly">
 <h1>Computation Graph Model Design ang Assembly<a class="headerlink" href="#computation-graph-model-design-ang-assembly" title="Permalink to this heading"></a></h1>
-<p>A model is a computational graph. We have identified variables. Variables are dependent one from the other. The
-dependence can be explicit or implicit. In the explicit case, a variable can be directly computed from the
-other using a function evaluation. In the implicit case, such function does not exist in a simple form. The
+<p>We essentially define a model as a computational graph. We have identified variables. Variables are dependent one from
+the other. The dependence can be explicit or implicit. In the explicit case, a variable can be directly computed from
+the other using a function evaluation. In the implicit case, such function does not exist in a simple form. The
 relationship between the variables is given through equations. The purpose of our simulations is to solve these
-equations. The equations are added to the system of non-linear equation we solve, at each time step in the case
-of an evolution problem.</p>
+equations. The equations are added to the system of non-linear equation we solve, at each time step in the case of an
+evolution problem.</p>
 <p>In the computational graph, the nodes are given by the variables in the model. The directed edges represent the
 functional dependency between the variables</p>
 <section id="a-simple-introduction-example">

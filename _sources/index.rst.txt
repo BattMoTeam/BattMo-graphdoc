@@ -2,12 +2,12 @@
 Computation Graph Model Design ang Assembly
 ===========================================
 
-A model is a computational graph. We have identified variables. Variables are dependent one from the other. The
-dependence can be explicit or implicit. In the explicit case, a variable can be directly computed from the
-other using a function evaluation. In the implicit case, such function does not exist in a simple form. The
+We essentially define a model as a computational graph. We have identified variables. Variables are dependent one from
+the other. The dependence can be explicit or implicit. In the explicit case, a variable can be directly computed from
+the other using a function evaluation. In the implicit case, such function does not exist in a simple form. The
 relationship between the variables is given through equations. The purpose of our simulations is to solve these
-equations. The equations are added to the system of non-linear equation we solve, at each time step in the case
-of an evolution problem.
+equations. The equations are added to the system of non-linear equation we solve, at each time step in the case of an
+evolution problem.
 
 In the computational graph, the nodes are given by the variables in the model. The directed edges represent the
 functional dependency between the variables
