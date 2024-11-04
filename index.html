@@ -431,7 +431,7 @@ model</span></a>. Namespace is needed to distinguish between those,</p>
 </div></blockquote>
 <p>Let us introduce the code functionalities for constructing models. For the moment, we focus on the the nodes
 (variable names). Later, we will look at the edges (functional dependencies). We use the <a class="reference internal" href="#tempgraph"><span class="std std-ref">temperature
-model</span></a> as an example. The class <a class="reference external" href="https://github.com/BattMoTeam/BattMo-graphdoc/blob/graphdoc/Utilities/BaseModel.m">BaseModel</a> is, at its name indicates, the base class for
+model</span></a> as an example. The class <a class="reference external" href="https://github.com/BattMoTeam/BattMo-graphdoc/blob/graphdoc/Utilities/Various/BaseModel.m">BaseModel</a> is, at its name indicates, the base class for
 all models. We will introduce gradually the most usefull methods for this class. For our temperature model, we
 start with</p>
 <div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="k">classdef</span><span class="w"> </span><span class="n">ThermalModel</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">BaseModel</span>
@@ -485,7 +485,7 @@ that acts on the graph.</p>
 <div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">cgt</span><span class="w"> </span><span class="p">=</span><span class="w">  </span><span class="n">model</span><span class="p">.</span><span class="n">cgt</span><span class="p">;</span>
 </pre></div>
 </div>
-<p>When the computational graph is setup, the property <code class="code docutils literal notranslate"><span class="pre">varNameList</span></code> of <a class="reference external" href="https://github.com/BattMoTeam/BattMo-graphdoc/blob/graphdoc/Utilities/BaseModel.m">BaseModel</a> is populated
+<p>When the computational graph is setup, the property <code class="code docutils literal notranslate"><span class="pre">varNameList</span></code> of <a class="reference external" href="https://github.com/BattMoTeam/BattMo-graphdoc/blob/graphdoc/Utilities/Various/BaseModel.m">BaseModel</a> is populated
 with <a class="reference external" href="https://github.com/BattMoTeam/BattMo-graphdoc/blob/graphdoc/Utilities/ComputationalGraph/VarName.m">VarName</a> variables. We will rarely look at this list directly. Instead, we use the method
 <code class="code docutils literal notranslate"><span class="pre">printVarNames</span></code> in <a class="reference external" href="https://github.com/BattMoTeam/BattMo-graphdoc/blob/graphdoc/Utilities/ComputationalGraph/ComputationalGraphTool.m">ComputationalGraphTool</a> which, as its name indicates, print the variables
 that have been registered.</p>
